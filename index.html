@@ -9,20 +9,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        :root {
-            --primary-green: #1e7e34;
-            --secondary-green: #218838;
-            --primary-yellow: #ffc107;
-        }
-        body { font-family: 'Sarabun', sans-serif; background-color: #f8f9fa; }
-        .bg-primary-green { background-color: var(--primary-green); }
-        .text-primary-green { color: var(--primary-green); }
+        :root { --primary-green: #1e7e34; }
+        body { font-family: 'Sarabun', sans-serif; }
         .form-container { border-top: 4px solid var(--primary-green); }
         .btn-submit { background-color: var(--primary-green); }
-        .btn-submit:hover { background-color: var(--secondary-green); }
-        .university-logo { max-width: 80px; height: auto; }
-        .disabled\:bg-gray-400:disabled { background-color: #9ca3af; }
-        .disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+        .hidden { display: none; }
     </style>
 </head>
 <body class="min-h-screen bg-gray-50">
@@ -30,9 +21,9 @@
         <div class="max-w-3xl mx-auto">
             <div class="flex items-center justify-center mb-6">
                 <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-center w-full">
-                    <img id="userProfilePic" class="university-logo rounded-full mr-4 hidden" alt="User Profile">
+                    <img id="userProfilePic" class="w-20 h-20 rounded-full mr-4 hidden" alt="User Profile">
                     <div>
-                        <h1 class="text-2xl md:text-3xl font-bold text-primary-green">ระบบลงทะเบียนผู้ใช้งาน</h1>
+                        <h1 class="text-2xl md:text-3xl font-bold text-green-700">ระบบลงทะเบียนผู้ใช้งาน</h1>
                         <h2 class="text-lg md:text-xl text-gray-600">มหาวิทยาลัยราชภัฏ</h2>
                     </div>
                 </div>
@@ -42,12 +33,11 @@
                 <form id="registrationForm" class="space-y-6">
                     <input type="hidden" id="userId" name="userId">
                     <input type="hidden" id="pictureUrl" name="pictureUrl">
+                    <input type="hidden" id="lineDisplayName" name="lineDisplayName">
 
-                    <div class="grid grid-cols-1">
-                        <div>
-                            <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล <span class="text-red-500">*</span></label>
-                            <input type="text" id="fullName" name="fullName" required class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
-                        </div>
+                    <div>
+                        <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล <span class="text-red-500">*</span></label>
+                        <input type="text" id="fullName" name="fullName" required class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="กรุณากรอกชื่อ-นามสกุล">
                     </div>
 
                     <div>
@@ -61,27 +51,49 @@
                             <option value="เจ้าหน้าที่บริหารงานทั่วไป">เจ้าหน้าที่บริหารงานทั่วไป</option>
                             <option value="นักวิชาการคอมพิวเตอร์">นักวิชาการคอมพิวเตอร์</option>
                             <option value="นักวิชาการศึกษา">นักวิชาการศึกษา</option>
+                            <option value="นักวิเคราะห์นโยบายและแผน">นักวิเคราะห์นโยบายและแผน</option>
+                            <option value="นักวิเทศสัมพันธ์">นักวิเทศสัมพันธ์</option>
+                            <option value="นิติกร">นิติกร</option>
+                            <option value="บรรณารักษ์">บรรณารักษ์</option>
+                            <option value="อื่นๆ">อื่นๆ...</option>
                         </select>
+                        <input type="text" id="positionOther" name="positionOther" class="w-full px-4 py-2 border border-gray-300 rounded-md mt-2 hidden" placeholder="กรุณาระบุตำแหน่ง">
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="department" class="block text-sm font-medium text-gray-700 mb-1">หน่วยงาน <span class="text-red-500">*</span></label>
-                            <select id="department" name="department" required class="w-full px-4 py-2 border border-gray-300 rounded-md">
-                                <option value="" disabled selected>-- เลือกหน่วยงาน --</option>
-                                <option value="คณะครุศาสตร์">คณะครุศาสตร์</option>
-                                <option value="คณะมนุษยศาสตร์และสังคมศาสตร์">คณะมนุษยศาสตร์และสังคมศาสตร์</option>
-                                <option value="คณะวิทยาศาสตร์และเทคโนโลยี">คณะวิทยาศาสตร์และเทคโนโลยี</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="location" class="block text-sm font-medium text-gray-700 mb-1">สถานที่ตั้ง <span class="text-red-500">*</span></label>
-                            <select id="location" name="location" required class="w-full px-4 py-2 border border-gray-300 rounded-md">
-                                <option value="" disabled selected>-- เลือกสถานที่ตั้ง --</option>
-                                <option value="อาคาร 1">อาคาร 1</option>
-                                <option value="อาคาร 2">อาคาร 2</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label for="department" class="block text-sm font-medium text-gray-700 mb-1">หน่วยงาน/คณะ <span class="text-red-500">*</span></label>
+                        <select id="department" name="department" required class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                            <option value="" disabled selected>-- เลือกหน่วยงาน --</option>
+                            <option value="สำนักงานอธิการบดี">สำนักงานอธิการบดี</option>
+                            <option value="คณะครุศาสตร์">คณะครุศาสตร์</option>
+                            <option value="คณะมนุษยศาสตร์และสังคมศาสตร์">คณะมนุษยศาสตร์และสังคมศาสตร์</option>
+                            <option value="คณะวิทยาศาสตร์และเทคโนโลยี">คณะวิทยาศาสตร์และเทคโนโลยี</option>
+                            <option value="คณะวิทยาการจัดการ">คณะวิทยาการจัดการ</option>
+                            <option value="คณะเทคโนโลยีอุตสาหกรรม">คณะเทคโนโลยีอุตสาหกรรม</option>
+                            <option value="คณะเทคโนโลยีการเกษตร">คณะเทคโนโลยีการเกษตร</option>
+                            <option value="บัณฑิตวิทยาลัย">บัณฑิตวิทยาลัย</option>
+                            <option value="สำนักส่งเสริมวิชาการและงานทะเบียน">สำนักส่งเสริมวิชาการและงานทะเบียน</option>
+                            <option value="สำนักวิทยบริการและเทคโนโลยีสารสนเทศ">สำนักวิทยบริการและเทคโนโลยีสารสนเทศ</option>
+                            <option value="สถาบันวิจัยและพัฒนา">สถาบันวิจัยและพัฒนา</option>
+                            <option value="อื่นๆ">อื่นๆ...</option>
+                        </select>
+                        <input type="text" id="departmentOther" name="departmentOther" class="w-full px-4 py-2 border border-gray-300 rounded-md mt-2 hidden" placeholder="กรุณาระบุหน่วยงาน/คณะ">
+                    </div>
+                    
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">สถานที่ตั้ง (อาคาร) <span class="text-red-500">*</span></label>
+                        <select id="location" name="location" required class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                            <option value="" disabled selected>-- เลือกสถานที่ตั้ง --</option>
+                            <option value="อาคาร 1 (อาคารอำนวยการ)">อาคาร 1 (อาคารอำนวยการ)</option>
+                            <option value="อาคาร 2 (คณะวิทยาการจัดการ)">อาคาร 2 (คณะวิทยาการจัดการ)</option>
+                            <option value="อาคาร 3 (คณะครุศาสตร์)">อาคาร 3 (คณะครุศาสตร์)</option>
+                            <option value="อาคาร 4 (คณะมนุษยศาสตร์ฯ)">อาคาร 4 (คณะมนุษยศาสตร์ฯ)</option>
+                            <option value="อาคาร 5 (อาคารเรียนรวม)">อาคาร 5 (อาคารเรียนรวม)</option>
+                            <option value="อาคาร 6 (คณะวิทยาศาสตร์ฯ)">อาคาร 6 (คณะวิทยาศาสตร์ฯ)</option>
+                            <option value="อาคาร 7 (บรรณราชนครินทร์)">อาคาร 7 (บรรณราชนครินทร์)</option>
+                            <option value="อื่นๆ">อื่นๆ...</option>
+                        </select>
+                        <input type="text" id="locationOther" name="locationOther" class="w-full px-4 py-2 border border-gray-300 rounded-md mt-2 hidden" placeholder="กรุณาระบุสถานที่ตั้ง">
                     </div>
 
                     <div>
@@ -90,10 +102,8 @@
                     </div>
 
                     <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-md">
-                        <input type="checkbox" id="pdpaConsent" name="pdpaConsent" required class="h-5 w-5 text-primary-green">
-                        <label for="pdpaConsent" class="text-sm text-gray-700">
-                            ข้าพเจ้ายินยอมให้มหาวิทยาลัยฯ เก็บรวบรวม ใช้ และเปิดเผยข้อมูลส่วนบุคคลของข้าพเจ้า...<span class="text-red-500">*</span>
-                        </label>
+                        <input type="checkbox" id="pdpaConsent" name="pdpaConsent" required class="h-5 w-5 text-green-700">
+                        <label for="pdpaConsent" class="text-sm text-gray-700">ข้าพเจ้ายินยอมให้มหาวิทยาลัยฯ เก็บรวบรวมและใช้ข้อมูลส่วนบุคคลของข้าพเจ้า...<span class="text-red-500">*</span></label>
                     </div>
 
                     <div class="flex justify-center pt-4">
@@ -101,68 +111,86 @@
                     </div>
                 </form>
 
-                <div id="loadingMessage" class="text-center text-gray-500 mt-4">
-                    <p>กำลังโหลดข้อมูลผู้ใช้จาก LINE...</p>
-                </div>
+                <div id="loadingMessage" class="text-center text-gray-500 mt-4"><p>กำลังโหลดข้อมูลผู้ใช้จาก LINE...</p></div>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
-            const form = document.getElementById('registrationForm');
             const submitButton = document.getElementById('submitButton');
             const loadingMessage = document.getElementById('loadingMessage');
 
+            // --- Setup 'Other' fields ---
+            function setupOtherField(dropdownId, otherFieldId) {
+                const dropdown = document.getElementById(dropdownId);
+                const otherField = document.getElementById(otherFieldId);
+                dropdown.addEventListener('change', function() {
+                    if (this.value === 'อื่นๆ') {
+                        otherField.classList.remove('hidden');
+                        otherField.required = true;
+                    } else {
+                        otherField.classList.add('hidden');
+                        otherField.required = false;
+                        otherField.value = '';
+                    }
+                });
+            }
+            setupOtherField('position', 'positionOther');
+            setupOtherField('department', 'departmentOther');
+            setupOtherField('location', 'locationOther');
+
+            // --- LIFF Initialization ---
             try {
-                // !!! PASTE YOUR LIFF ID HERE !!!
-                await liff.init({ liffId: "2007495650-1nWAxDD9" });
-
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                    return;
-                }
-
+                await liff.init({ liffId: "2007495650-1nWAxDD9" }); // !!! PASTE YOUR LIFF ID HERE !!!
+                if (!liff.isLoggedIn()) { liff.login(); return; }
                 const profile = await liff.getProfile();
                 
-                // Populate Form
                 document.getElementById('userId').value = profile.userId;
-                document.getElementById('fullName').value = profile.displayName;
                 document.getElementById('pictureUrl').value = profile.pictureUrl;
-                
+                document.getElementById('lineDisplayName').value = profile.displayName;
+
                 const profilePic = document.getElementById('userProfilePic');
                 profilePic.src = profile.pictureUrl;
                 profilePic.classList.remove('hidden');
 
-                // --- Enable form submission ---
-                loadingMessage.style.display = 'none'; // Hide loading message
-                submitButton.disabled = false; // Enable the submit button
+                loadingMessage.style.display = 'none';
+                submitButton.disabled = false;
 
             } catch (err) {
-                loadingMessage.innerHTML = '<p class="text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้</p>';
-                Swal.fire({
-                    icon: 'error',
-                    title: 'LIFF Error',
-                    text: 'ไม่สามารถโหลดข้อมูลผู้ใช้จาก LINE ได้: ' + err.message,
-                    allowOutsideClick: false
-                });
+                loadingMessage.innerHTML = '<p class="text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+                Swal.fire({ icon: 'error', title: 'LIFF Error', text: 'ไม่สามารถโหลดข้อมูลผู้ใช้จาก LINE ได้: ' + err.message });
             }
 
-            form.addEventListener('submit', function(e) {
+            // --- Form Submission ---
+            document.getElementById('registrationForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                
-                if (!form.checkValidity()) {
+                if (!this.checkValidity()) {
                     Swal.fire({ icon: 'error', title: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
                     return;
                 }
                 
+                let positionValue = document.getElementById('position').value;
+                if (positionValue === 'อื่นๆ') {
+                    positionValue = document.getElementById('positionOther').value;
+                }
+                let departmentValue = document.getElementById('department').value;
+                if (departmentValue === 'อื่นๆ') {
+                    departmentValue = document.getElementById('departmentOther').value;
+                }
+                let locationValue = document.getElementById('location').value;
+                if (locationValue === 'อื่นๆ') {
+                    locationValue = document.getElementById('locationOther').value;
+                }
+
                 const formData = {
                     userId: document.getElementById('userId').value,
+                    lineDisplayName: document.getElementById('lineDisplayName').value,
                     fullName: document.getElementById('fullName').value,
                     pictureUrl: document.getElementById('pictureUrl').value,
-                    position: document.getElementById('position').value,
-                    department: document.getElementById('department').value,
-                    location: document.getElementById('location').value,
+                    position: positionValue,
+                    department: departmentValue,
+                    location: locationValue,
                     phoneExt: document.getElementById('phoneExt').value,
                     pdpaConsent: document.getElementById('pdpaConsent').checked
                 };
@@ -172,12 +200,7 @@
                     return;
                 }
 
-                Swal.fire({
-                    title: 'กำลังบันทึกข้อมูล',
-                    allowOutsideClick: false,
-                    didOpen: () => { Swal.showLoading(); }
-                });
-
+                Swal.fire({ title: 'กำลังบันทึกข้อมูล', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                 submitFormWithJSONP(formData);
             });
         });
@@ -186,45 +209,25 @@
             const callbackName = 'jsonpCallback_' + Date.now();
             window[callbackName] = function(response) {
                 if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'บันทึกข้อมูลสำเร็จ',
-                        text: 'ขอบคุณสำหรับการลงทะเบียน ท่านสามารถปิดหน้านี้ได้เลย'
-                    }).then(() => {
-                        liff.closeWindow();
-                    });
+                    Swal.fire({ icon: 'success', title: 'บันทึกข้อมูลสำเร็จ', text: 'ขอบคุณสำหรับการลงทะเบียน' })
+                    .then(() => { liff.closeWindow(); });
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'เกิดข้อผิดพลาด',
-                        text: response.message || 'ไม่สามารถบันทึกข้อมูลได้'
-                    });
+                    Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: response.message || 'ไม่สามารถบันทึกข้อมูลได้' });
                 }
                 delete window[callbackName];
-                // A small safety check for the script element before removing
                 const scriptEl = document.getElementById('jsonp-script-' + callbackName);
-                if(scriptEl) {
-                    document.body.removeChild(scriptEl);
-                }
+                if(scriptEl) document.body.removeChild(scriptEl);
             };
 
-            // !!! PASTE YOUR WEB APP URL HERE !!!
-            const scriptUrl = 'https://script.google.com/macros/s/AKfycbzc5WNqmqUVpubQ0QfFkieiJCx1ZlgWdiDJhHPj9pPpnYI4Uj0rLehc7JCSm7FYbI4v/exec'; 
-            const queryParams = new URLSearchParams({
-                callback: callbackName,
-                action: 'registerLiff',
-                ...data
-            }).toString();
-
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbzc5WNqmqUVpubQ0QfFkieiJCx1ZlgWdiDJhHPj9pPpnYI4Uj0rLehc7JCSm7FYbI4v/exec'; // !!! PASTE YOUR WEB APP URL HERE !!!
+            const queryParams = new URLSearchParams({ callback: callbackName, action: 'registerLiff', ...data }).toString();
             const script = document.createElement('script');
             script.id = 'jsonp-script-' + callbackName;
             script.src = `${scriptUrl}?${queryParams}`;
-            
-            script.onerror = function() {
+            script.onerror = () => {
                 Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาดในการเชื่อมต่อ' });
                 delete window[callbackName];
             };
-            
             document.body.appendChild(script);
         }
     </script>
